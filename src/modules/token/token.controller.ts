@@ -1,9 +1,11 @@
-import { Controller, Post, Req, Res } from '@nestjs/common';
+import { Controller, Post, Req, Res, UseFilters } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { setCookies } from 'src/common/utils/cookies';
+import { HttpExceptionFilter } from 'src/exception-filters/http-exception.filter';
 import { TokenService } from './token.service';
 
+@UseFilters(HttpExceptionFilter)
 @Controller('token')
 export class TokenController {
   constructor(
