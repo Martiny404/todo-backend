@@ -1,12 +1,14 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UseFilters } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { AppClientRequest } from 'src/common/types/client-request.interface';
+import { HttpExceptionFilter } from 'src/exception-filters/http-exception.filter';
 import { clearCookies, setCookies } from '../../common/utils/cookies';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
+@UseFilters(HttpExceptionFilter)
 @Controller('auth')
 export class AuthController {
   constructor(
