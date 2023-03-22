@@ -8,10 +8,11 @@ import { PassportModule } from '@nestjs/passport';
 import { UserModule } from '../user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GetJwtConfig } from 'src/config/jwt.config';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   controllers: [TokenController],
-  providers: [TokenService],
+  providers: [TokenService, JwtStrategy],
   imports: [
     JwtModule.registerAsync({
       imports: [ConfigModule],

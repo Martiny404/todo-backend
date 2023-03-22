@@ -1,5 +1,7 @@
 import { BaseColumns } from 'src/common/classes/base-entity.class';
-import { Column, Entity } from 'typeorm';
+import { Folder } from 'src/modules/folder/entities/folder.entity';
+import { User } from 'src/modules/user/entities/user.entity';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Note extends BaseColumns {
@@ -9,6 +11,18 @@ export class Note extends BaseColumns {
   @Column()
   description: string;
 
-  @Column({ nullable: true })
-  image: string;
+  @Column({ nullable: true, name: 'file_path' })
+  filePath: string;
+
+  @ManyToOne(() => Folder, (folder) => folder.notes, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'folder_id' })
+  folder: Folder;
+
+  @ManyToOne(() => User, (user) => user.folders, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

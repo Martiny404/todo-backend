@@ -15,6 +15,6 @@ export async function GetTypeormConfig(
     autoLoadEntities: true,
     synchronize: true,
     entities: [join(process.cwd(), 'dist', '**', '*.entity{.ts,.js}')],
-    logging: true,
+    //logging: true,
   };
 }
