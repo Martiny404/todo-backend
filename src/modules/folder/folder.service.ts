@@ -81,18 +81,6 @@ export class FolderService {
     return existName;
   }
 
-  async toggleHidden(id: number, userId: number): Promise<Folder> {
-    const folder = await this.findFolder({
-      where: { id, user: { id: userId } },
-    });
-
-    if (!folder) {
-      throw new NotFoundException(FOLDER_NOT_FOUND);
-    }
-    folder.hidden = !folder.hidden;
-    return this.saveFolder(folder);
-  }
-
   async removeFolders(ids: number[], userId: number): Promise<Folder[]> {
     const folders = await this.folderRepository.find({
       where: {

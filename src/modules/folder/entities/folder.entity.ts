@@ -8,9 +8,6 @@ export class Folder extends BaseColumns {
   @Column()
   name: string;
 
-  @Column({ type: 'boolean', default: false })
-  hidden: boolean;
-
   @ManyToOne(() => User, (user) => user.folders, {
     onDelete: 'CASCADE',
   })
