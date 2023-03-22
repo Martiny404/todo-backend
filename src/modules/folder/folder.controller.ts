@@ -41,7 +41,6 @@ export class FolderController {
     @Query() query: GetOneFolderDto,
   ) {
     const userId = req.user.id;
-
     return this.folderService.getOne(query, id, userId);
   }
 

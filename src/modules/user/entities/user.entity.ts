@@ -1,5 +1,4 @@
 import { BaseColumns } from 'src/common/classes/base-entity.class';
-import { Basket } from 'src/modules/basket/entities/basket.entity';
 import { Folder } from 'src/modules/folder/entities/folder.entity';
 import { Note } from 'src/modules/note/entities/note.entity';
 import { Role } from 'src/modules/role/entities/role.entity';
@@ -30,7 +29,4 @@ export class User extends BaseColumns {
 
   @OneToMany(() => Note, (notes) => notes.user)
   notes: Note[];
-
-  @OneToMany(() => Basket, (basket) => basket.user)
-  basket: Basket;
 }

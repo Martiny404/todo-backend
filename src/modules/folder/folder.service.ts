@@ -81,15 +81,23 @@ export class FolderService {
             title: sort,
           };
 
-    const where: FindOptionsWhere<Folder> = dto.notCompleted
-      ? {
-          id,
-          user: { id: userId },
-          notes: {
-            isCompleted: false,
-          },
-        }
-      : { id, user: { id: userId } };
+    const where: FindOptionsWhere<Folder> = { id, user: { id: userId } };
+
+    if (dto.notCompleted !== undefined) {
+      where.notes = dto.notCompleted
+        ? { isCompleted: false }
+        : { isCompleted: true };
+    }
+
+    // const where: FindOptionsWhere<Folder> = dto.notCompleted
+    //   ? {
+    //       id,
+    //       user: { id: userId },
+    //       notes: {
+    //         isCompleted: false,
+    //       },
+    //     }
+    //   :
 
     return this.findFolder({
       where: where,

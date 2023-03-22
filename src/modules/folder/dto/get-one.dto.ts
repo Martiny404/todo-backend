@@ -21,5 +21,5 @@ export class GetOneFolderDto {
   @Transform(({ value }) => toBoolean(value))
   @IsOptional()
   @IsBoolean()
-  notCompleted?: boolean = false;
+  notCompleted?: boolean;
 }
