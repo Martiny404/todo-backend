@@ -9,9 +9,10 @@ import {
   NOTE_NOT_FOUND,
   NOTE_TITLE_EXIST,
 } from 'src/common/constants/error-messages/note.errors';
-import { Repository, SaveOptions } from 'typeorm';
+import { In, Repository, SaveOptions } from 'typeorm';
 import { FolderService } from '../folder/folder.service';
 import { CreateNoteDto } from './dto/create-note.dto';
+import { UpdateNoteDto } from './dto/update-note.dto';
 import { Note } from './entities/note.entity';
 
 @Injectable()
@@ -44,6 +45,36 @@ export class NoteService {
     return this.saveNote(note);
   }
 
+  async update(
+    { title, ...fields }: UpdateNoteDto,
+    id: number,
+    userId: number,
+  ): Promise<Note> {
+    const note = await this.noteRepository.findOne({
+      where: {
+        id,
+        user: { id: userId },
+      },
+      relations: { folder: true },
+    });
+
+    if (!note) {
+      throw new NotFoundException(NOTE_NOT_FOUND);
+    }
+
+    if (title) {
+      const titleExist = await this.checkNoteTitle(note.folder.id, title);
+      if (titleExist) {
+        throw new BadRequestException(NOTE_TITLE_EXIST);
+      }
+      note.title = title;
+    }
+    return this.saveNote({
+      ...note,
+      ...fields,
+    });
+  }
+
   async checkNoteTitle(folderId: number, title: string): Promise<Note> {
     const notes = await this.noteRepository.find({
       where: { folder: { id: folderId } },
@@ -66,5 +97,16 @@ export class NoteService {
     }
     note.isCompleted = !note.isCompleted;
     return this.saveNote(note);
+  }
+
+  async removeNotes(ids: number[], userId: number): Promise<Note[]> {
+    const notes = await this.noteRepository.find({
+      where: {
+        id: In(ids),
+        user: { id: userId },
+      },
+    });
+    const removed = await this.noteRepository.remove(notes);
+    return removed;
   }
 }

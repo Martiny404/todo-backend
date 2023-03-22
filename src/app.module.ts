@@ -10,7 +10,6 @@ import { RoleModule } from './modules/role/role.module';
 import { FolderModule } from './modules/folder/folder.module';
 import { NoteModule } from './modules/note/note.module';
 import { FileUploadModule } from './modules/file-upload/file-upload.module';
-import { BasketModule } from './modules/basket/basket.module';
 
 @Module({
   imports: [
@@ -29,7 +28,6 @@ import { BasketModule } from './modules/basket/basket.module';
     FolderModule,
     NoteModule,
     FileUploadModule,
-    BasketModule,
   ],
 })
 export class AppModule {}
