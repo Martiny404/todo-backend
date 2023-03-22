@@ -14,6 +14,9 @@ export class Note extends BaseColumns {
   @Column({ nullable: true, name: 'file_path' })
   filePath: string;
 
+  @Column({ type: 'boolean', name: 'is_completed', default: false })
+  isCompleted: boolean;
+
   @ManyToOne(() => Folder, (folder) => folder.notes, {
     onDelete: 'CASCADE',
   })

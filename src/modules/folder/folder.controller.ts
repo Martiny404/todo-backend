@@ -2,10 +2,12 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Req,
   UseFilters,
   UseGuards,
@@ -14,6 +16,8 @@ import { AppClientRequest } from 'src/common/types/client-request.interface';
 import { HttpExceptionFilter } from 'src/exception-filters/http-exception.filter';
 import { AuthorizationGuard } from '../token/guards/authorization.guard';
 import { CreateFolderDto } from './dto/create-folder.dto';
+import { GetAllFoldersDto } from './dto/get-all.dto';
+import { GetOneFolderDto } from './dto/get-one.dto';
 import { RemoveFoldersDto } from './dto/remove-folders.dto';
 import { FolderService } from './folder.service';
 
@@ -21,6 +25,25 @@ import { FolderService } from './folder.service';
 @Controller('folder')
 export class FolderController {
   constructor(private readonly folderService: FolderService) {}
+
+  @UseGuards(AuthorizationGuard)
+  @Get('/all')
+  getAll(@Query() query: GetAllFoldersDto, @Req() req: AppClientRequest) {
+    const userId = req.user.id;
+    return this.folderService.getAll(query, userId);
+  }
+
+  @UseGuards(AuthorizationGuard)
+  @Get('/:id')
+  getOne(
+    @Param('id', new ParseIntPipe()) id: number,
+    @Req() req: AppClientRequest,
+    @Query() query: GetOneFolderDto,
+  ) {
+    const userId = req.user.id;
+
+    return this.folderService.getOne(query, id, userId);
+  }
 
   @UseGuards(AuthorizationGuard)
   @Post('/create')

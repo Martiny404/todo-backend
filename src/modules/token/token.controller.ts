@@ -1,7 +1,7 @@
 import { Controller, Post, Req, Res, UseFilters } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
-import { setCookies } from 'src/common/utils/cookies';
+import { setCookies } from 'src/common/utils/cookies.util';
 import { HttpExceptionFilter } from 'src/exception-filters/http-exception.filter';
 import { TokenService } from './token.service';
 

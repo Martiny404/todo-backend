@@ -9,5 +9,6 @@ import { UserModule } from '../user/user.module';
   controllers: [FolderController],
   providers: [FolderService],
   imports: [TypeOrmModule.forFeature([Folder]), UserModule],
+  exports: [FolderService],
 })
 export class FolderModule {}

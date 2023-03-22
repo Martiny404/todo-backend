@@ -9,9 +9,22 @@ import {
   FOLDER_NOT_FOUND,
 } from 'src/common/constants/error-messages/folder.errors';
 import { USER_NOT_FOUND } from 'src/common/constants/error-messages/user.errors';
-import { FindOneOptions, In, Repository, SaveOptions } from 'typeorm';
+import { SortMethod, SortType } from 'src/common/types/search-params.interface';
+import {
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsOrder,
+  FindOptionsOrderValue,
+  FindOptionsWhere,
+  In,
+  Repository,
+  SaveOptions,
+} from 'typeorm';
+import { Note } from '../note/entities/note.entity';
 import { UserService } from '../user/user.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
+import { GetAllFoldersDto } from './dto/get-all.dto';
+import { GetOneFolderDto } from './dto/get-one.dto';
 import { Folder } from './entities/folder.entity';
 
 @Injectable()
@@ -21,6 +34,71 @@ export class FolderService {
     private readonly folderRepository: Repository<Folder>,
     private readonly userService: UserService,
   ) {}
+
+  async getAll(
+    dto: GetAllFoldersDto,
+    userId: number,
+  ): Promise<[Folder[], number]> {
+    const offset = dto.page * 9 - 9;
+
+    const sort: FindOptionsOrderValue =
+      dto.method == SortMethod.ASC ? 'ASC' : 'DESC';
+
+    const order: FindOptionsOrder<Folder> =
+      dto.sort == SortType.DATE
+        ? {
+            createdAt: sort,
+          }
+        : {
+            name: sort,
+          };
+
+    const where: FindManyOptions<Folder> = {
+      where: { user: { id: userId } },
+      skip: offset,
+      take: 9,
+      order,
+    };
+
+    const res = await this.folderRepository.findAndCount(where);
+    return res;
+  }
+
+  async getOne(
+    dto: GetOneFolderDto,
+    id: number,
+    userId: number,
+  ): Promise<Folder> {
+    const sort: FindOptionsOrderValue =
+      dto.method == SortMethod.ASC ? 'ASC' : 'DESC';
+
+    const order: FindOptionsOrder<Note> =
+      dto.sort == SortType.DATE
+        ? {
+            createdAt: sort,
+          }
+        : {
+            title: sort,
+          };
+
+    const where: FindOptionsWhere<Folder> = dto.notCompleted
+      ? {
+          id,
+          user: { id: userId },
+          notes: {
+            isCompleted: false,
+          },
+        }
+      : { id, user: { id: userId } };
+
+    return this.findFolder({
+      where: where,
+      relations: { notes: true },
+      order: {
+        notes: order,
+      },
+    });
+  }
 
   async saveFolder(entity: Folder, options?: SaveOptions): Promise<Folder> {
     return await this.folderRepository.save(entity, options);
